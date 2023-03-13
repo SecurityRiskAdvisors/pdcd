@@ -24,7 +24,7 @@ pip install dist/*.whl
 Execute payloads in config
 
 ```
-pdcd run -c <config file> [-w \<# workers\>]
+pdcd run -c <config file> [-w <# workers>]
 ```
 
 - **-c** path to config file
@@ -36,7 +36,7 @@ Retrieve logs for payloads in config
 *Note:* only usable when cleanup is set to "False" in config
 
 ```
-pdcd logs -c <config file> [-l <#>] [-i \<image\>]
+pdcd logs -c <config file> [-l <#>] [-i <image>]
 ```
 
 - **-c** path to config file
