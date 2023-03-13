@@ -9,7 +9,7 @@ Logging external commands run through `utils.shell()` can be suppressed via `PDC
 
 Logged events use the format: 
 
-> < time > | < log level > | < file > | [< function >:< line no >] < message >
+`< time > | < log level > | < file > | [< function >:< line no >] < message >`
 
 - The file is the file path of the code responsible for logging the message
 - The function and line number are the location in the file that is responsible for logging the message

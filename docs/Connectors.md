@@ -25,7 +25,7 @@ The args are specific to the connector type. See below for details.
 
 Once configured, connectors can be used in the payload CLI using special format of:
 
-> @<name>::<token>
+`@<name>::<token>`
 
 Where name is the connector name and token is the connector-specific token.
 
@@ -43,7 +43,7 @@ Where name is the connector name and token is the connector-specific token.
 If the Cobalt Strike connector is configured, you can use a special command-line token to dynamically include Cobalt Strike shellcode (will be placed in file_dir directory).
 The format is:
 
-> <STAGED/STAGELESS>[PS]-<64/86>-<LISTENER>-[B64]
+`<STAGED/STAGELESS>[PS]-<64/86>-<LISTENER>-[B64]`
 
 The first part is whether the artifact is staged or stageless. If this part ends with "PS" it will be a PowerShell script rather than raw shellcode.
 The second part is the architecture.
@@ -52,17 +52,17 @@ The fourth part is whether the artifact should be base-64 encoded and is optiona
 
 Examples ("cobaltstrike" is used to represent the connector name):
 
-x64 stageless shellcode using HTTPS listener: @cobaltstrike::STAGELESS-64-HTTPS
+x64 stageless shellcode using HTTPS listener: `@cobaltstrike::STAGELESS-64-HTTPS`
 
-x64 stageless PowerShell using DNS listener: @cobaltstrike::STAGELESSPS-64-DNS
+x64 stageless PowerShell using DNS listener: `@cobaltstrike::STAGELESSPS-64-DNS`
 
-base-64 encoded x86 staged shellcode using HTTPS listener: @cobaltstrike::STAGED-86-HTTPS-B64
+base-64 encoded x86 staged shellcode using HTTPS listener: `@cobaltstrike::STAGED-86-HTTPS-B64`
 
 *Note:* 
 
 This tool will connect to the teamserver using the following username format
 
-> pdcd_<epoch>_<rand 8-char string>
+`pdcd_<epoch>_<rand 8-char string>`
 
 
 ## Mythic connector
@@ -80,14 +80,14 @@ The Mythic connector works the same as Cobalt Strike connector.
 More specifically, it supports the Apollo payload type using either an HTTP(S) or SMB listener.
 The token format is:
 
-> <ARTIFACT>-<PROFILE>
+`<ARTIFACT>-<PROFILE>`
 
 The first part is the artifact type and will be either "SHELLCODE" or "EXE"
 The second part is the name of the profile. Typically this will be "HTTP" (even for HTTPS).
 
 Examples ("mythic" is used to represent the connector name):
 
-Exe using HTTPS callback: @mythic::EXE-HTTP
+Exe using HTTPS callback: `@mythic::EXE-HTTP`
 
 *Note: Mythic stores callback connection configurations on a per-payload basis. This needs to be specified in the connector config and not the CLI token. This includes HTTP vs HTTPS and the port. PDCD will use its own default settings for all other payload settings. These can be overridden via environment variables - see [Settings.md](Settings.md).*
 
