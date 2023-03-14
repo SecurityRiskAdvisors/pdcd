@@ -1,8 +1,10 @@
 [tool.poetry]
 name = "pdcd"
-version = "1.0.0"
-description = ""
+version = "1.0.1"
+description = "Tool that orchestrates executing Docker containers to build payloads"
 authors = ["2XXE <@2XXEformyshirt>"]
+readme = "README.md"
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -24,3 +26,5 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 pdcd = "pdcd.cli:main"
+
+
