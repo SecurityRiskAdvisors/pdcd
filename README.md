@@ -27,6 +27,12 @@ Remote
 pip install git+https://github.com/SecurityRiskAdvisors/pdcd.git
 ```
 
+PyPI
+
+```
+pip install pdcd
+```
+
 ## Usage (running)
 
 Execute payloads in config
