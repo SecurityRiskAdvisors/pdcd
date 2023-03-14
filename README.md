@@ -4,7 +4,7 @@ PDC Docker is a lightweight tool that orchestrates executing Docker containers.
 
 Documentation can be found in the [docs directory](docs/).
 
-Release blog can be found here: [link](TBD).
+Release blog can be found here: [link](https://sra.io/blog/pdcd-orchestrating-payload-generation/).
 
 ## Setup
 
@@ -15,8 +15,16 @@ Release blog can be found here: [link](TBD).
 
 ### Using virtualenv
 
+Local
+
 ```
 pip install dist/*.whl
+```
+
+Remote
+
+```
+pip install git+https://github.com/SecurityRiskAdvisors/pdcd.git
 ```
 
 ## Usage (running)
