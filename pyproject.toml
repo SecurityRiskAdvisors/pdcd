@@ -2,7 +2,7 @@
 name = "pdcd"
 version = "1.0.1"
 description = "Tool that orchestrates executing Docker containers to build payloads"
-authors = ["2XXE <@2XXEformyshirt>"]
+authors = ["2XXE <root@example.com>"]
 readme = "README.md"
 license = "MIT"
 
