@@ -70,7 +70,7 @@ def subcmd_run(config: Config, **kwargs):
 )
 @click.option("-i", "--image", "image", type=str, help="limit logs to just this image", required=False)
 def subcmd_logs(config: Config, limit: int, image: str = None):
-    docker = config.get_docker_client()
+    docker = config.client_manager.get_client_by_name("docker").client
 
     if image:
         images = [image]
