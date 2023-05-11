@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdcd"
-version = "1.0.2"
+version = "1.1.0"
 description = "Tool that orchestrates executing Docker containers to build payloads"
 authors = ["2XXE <root@example.com>"]
 readme = "README.md"
@@ -14,7 +14,7 @@ PyYAML = "^5.4.1"
 boto3 = "^1.24.54"
 impacket = "^0.10.0"
 click = "^8.1.3"
-mythic = "^0.0.38"
+mythic = "^0.1.0"
 pydantic = "^1.10.5"
 
 [tool.poetry.dev-dependencies]

