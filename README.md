@@ -11,7 +11,7 @@ Release blog can be found here: [link](https://sra.io/blog/pdcd-orchestrating-pa
 - Have Python 3 installed
 - Have Docker installed
 - (Optional) AWS SSM Session Manager Plugin
-  - used for remote mode, see below for mode information
+  - used for remote mode, see [Connectors](docs/Connectors.md) for information
 
 ### Using virtualenv
 
