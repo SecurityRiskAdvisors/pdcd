@@ -12,6 +12,7 @@ from .external import DockerClient, FileRegistryClient, ArtifactClient
 from .files import set_fm_for_config
 from .connectors import convert_connector_dict_to_clients, RemoteBuildClient, ClientManager
 from .log import logger
+from .settings import global_settings
 
 if TYPE_CHECKING:
     from .files import SMBFileManager
@@ -52,6 +53,7 @@ class Config:
     file_dir: str = field(default_factory=tempfile.mkdtemp)
     cleanup: bool = True
     workers: int = 2
+    settings: Any = None
 
     @classmethod
     def from_file(cls, path: str) -> "Config":
@@ -60,7 +62,16 @@ class Config:
         data = yaml.safe_load(path.read_text())
         return desert.schema(cls).load(data)
 
+    def _process_settings(self):
+        if self.settings is None:
+            return
+        for k, v in self.settings.items():
+            if hasattr(global_settings, k):
+                setattr(global_settings, k, v)
+
     def __post_init__(self):
+        self._process_settings()
+
         self.remote_build = False
         self.mnt_dir = self.file_dir
         self.file_manager = None
