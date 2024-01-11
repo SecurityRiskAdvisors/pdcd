@@ -197,14 +197,16 @@ class MythicClient(ClientABC):
 
     @lru_cache(maxsize=None)
     def export_shellcode(self, profile: str, scformat: str = "Shellcode") -> Shellcode:
-        mythic = asyncio.run(mythic_sdk.login(
-            username=self.__user,
-            password=self.__password,
-            server_ip=self.__host,
-            server_port=int(self.__port),
-            ssl=True,
-            timeout=-1,
-        ))
+        mythic = asyncio.run(
+            mythic_sdk.login(
+                username=self.__user,
+                password=self.__password,
+                server_ip=self.__host,
+                server_port=int(self.__port),
+                ssl=True,
+                timeout=-1,
+            )
+        )
 
         # mythic payload settings are defined per payload rather than per listener,
         #   meaning you need to provide them via this tool
@@ -213,7 +215,7 @@ class MythicClient(ClientABC):
             build_vars = {
                 "pipename": global_settings.mythic_smb_pipename,
                 "killdate": "2030-10-12",
-                "encrypted_exchange_check": "T"
+                "encrypted_exchange_check": "T",
             }
         else:
             build_vars = {
@@ -232,22 +234,24 @@ class MythicClient(ClientABC):
                 "killdate": "2030-10-12",
                 "encrypted_exchange_check": True,
                 "callback_jitter": global_settings.mythic_jitter_percent,
-                "headers": {"User-Agent": global_settings.mythic_http_useragent}
+                "headers": {"User-Agent": global_settings.mythic_http_useragent},
             }
 
-        payload = asyncio.run(mythic_sdk.create_payload(
-            # TODO: currently hardcoded but should make configurable
-            #   this will require different configs for different payloads
-            mythic=mythic,
-            payload_type_name="apollo",
-            operating_system="Windows",
-            c2_profiles=[{"c2_profile": profile.lower(), "c2_profile_parameters": build_vars}],
-            build_parameters=[{"name": "output_type", "value": scformat}],
-            description="Built with PDCD",
-            filename="pdcd",
-            return_on_complete=True,
-            include_all_commands=True
-        ))
+        payload = asyncio.run(
+            mythic_sdk.create_payload(
+                # TODO: currently hardcoded but should make configurable
+                #   this will require different configs for different payloads
+                mythic=mythic,
+                payload_type_name="apollo",
+                operating_system="Windows",
+                c2_profiles=[{"c2_profile": profile.lower(), "c2_profile_parameters": build_vars}],
+                build_parameters=[{"name": "output_type", "value": scformat}],
+                description="Built with PDCD",
+                filename="pdcd",
+                return_on_complete=True,
+                include_all_commands=True,
+            )
+        )
         payload_contents = asyncio.run(mythic_sdk.download_payload(mythic=mythic, payload_uuid=payload.get("uuid")))
         # note: cannot delete payloads as mythic does not allow spawning from dead payloads
         if len(payload_contents) == 0:
