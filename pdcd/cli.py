@@ -22,9 +22,10 @@ def validate_path_exists(path) -> bool:
 
 def handle_config_input(ctx, param, value):
     # callback handler for auto-converting a path input value to a Config object
-    log_settings()
     validate_path_exists(value)
-    return Config.from_file(value)
+    cfg = Config.from_file(value)
+    log_settings()
+    return cfg
 
 
 class SharedOptions:
