@@ -1,5 +1,11 @@
 ***
 
+# Version 1.2.1 - October 2024
+
+- Dependency updates
+
+***
+
 # Version 1.2.0 - January 2024
 
 - Add `settings` key to config to allow settings configuration in config file
