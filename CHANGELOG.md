@@ -1,5 +1,11 @@
 ***
 
+# Version 1.3.0 - April 2026
+
+- Add support for Mythic HTTPX profile
+
+***
+
 # Version 1.2.1 - October 2024
 
 - Dependency updates
