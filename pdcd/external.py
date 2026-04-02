@@ -225,7 +225,7 @@ class MythicClient(ClientABC):
         elif profile.lower() == "httpx":
             config_path = pathlib.Path(self.__httpx_config)
             if not config_path.exists() or self.__httpx_config == '':
-                raise Exception(f"httpx config file not found: {self.__config}")
+                raise Exception(f"httpx config file not found: {self.__httpx_config}")
             config_bytes = config_path.read_bytes()
             file_uuid = asyncio.run(
                 mythic_sdk.register_file(
