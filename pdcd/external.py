@@ -7,6 +7,7 @@ import random
 import boto3
 import subprocess
 import json
+import os
 from dataclasses import dataclass, field
 from typing import Optional, TYPE_CHECKING, Tuple
 import mythic.mythic as mythic_sdk
@@ -161,7 +162,7 @@ class MythicClient(ClientABC):
         password: str,
         callback_url: str,  # http://example.com
         callback_port: str,
-        config: str = "",
+        httpx_config: str = "",
         port: str = "7443",  # management port
         user: str = "neo",
     ):
@@ -171,7 +172,9 @@ class MythicClient(ClientABC):
         self.__user = user
         self.__callback_url = callback_url
         self.__callback_port = callback_port
-        self.__config = config
+        if httpx_config and not os.path.isabs(httpx_config):
+            raise ValueError(f"Mythic httpx_config path must be absolute, got: {httpx_config}")
+        self.__httpx_config = httpx_config
 
     def resolve_token(self, token: str, file_dir: str, connector_name: str, **kwargs) -> Tuple[str, list]:
         # token format: < ARTIFACT > - < PROFILE >
@@ -220,8 +223,8 @@ class MythicClient(ClientABC):
                 "encrypted_exchange_check": "T",
             }
         elif profile.lower() == "httpx":
-            config_path = pathlib.Path(self.__config)
-            if not config_path.exists() or self.__config == '':
+            config_path = pathlib.Path(self.__httpx_config)
+            if not config_path.exists() or self.__httpx_config == '':
                 raise Exception(f"httpx config file not found: {self.__config}")
             config_bytes = config_path.read_bytes()
             file_uuid = asyncio.run(

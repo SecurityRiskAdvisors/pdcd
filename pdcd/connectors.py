@@ -57,7 +57,7 @@ class MythicConnector(Connector):
     callback_url: str
     callback_port: str
     user: str
-    config: str = ""
+    httpx_config: str = ""
 
     def to_client(self):
         return super().to_client()
