@@ -75,21 +75,26 @@ This tool will connect to the teamserver using the following username format
 |port|Mythic management port|7443|
 |callback_url|redirector url (no ending slash)|https://example.com|
 |callback_port|redirector port|443|
+|httpx_config|absolute path to httpx config file (optional)|/opt/configs/httpx.json|
 
 The Mythic connector works the same as Cobalt Strike connector.
-More specifically, it supports the Apollo payload type using either an HTTP(S) or SMB listener.
+More specifically, it supports the Apollo payload type using either an HTTP(S), SMB, or HTTPX listener.
 The token format is:
 
 `<ARTIFACT>-<PROFILE>`
 
 The first part is the artifact type and will be either "SHELLCODE" or "EXE"
-The second part is the name of the profile. Typically this will be "HTTP" (even for HTTPS).
+The second part is the name of the profile. Typically this will be "HTTP" (even for HTTPS), "SMB", or "HTTPX".
 
 Examples ("mythic" is used to represent the connector name):
 
 Exe using HTTPS callback: `@mythic::EXE-HTTP`
 
+Shellcode using HTTPX callback: `@mythic::SHELLCODE-HTTPX`
+
 *Note: Mythic stores callback connection configurations on a per-payload basis. This needs to be specified in the connector config and not the CLI token. This includes HTTP vs HTTPS and the port. PDCD will use its own default settings for all other payload settings. These can be overridden via environment variables - see [Settings.md](Settings.md).*
+
+*Note: The HTTPX profile requires `httpx_config` to be set in the connector args. This must be an absolute path to the httpx config file, which will be uploaded to Mythic during payload creation.*
 
 ## Remote connector
 
